@@ -83,6 +83,19 @@ Next Obligation.
 simpl.
 omega.
 Defined.
+
+Inductive alp : term -> term -> Prop :=
+| ref : forall M, alp M M
+| sym : forall M1 M2, alp M1 M2 -> alp M2 M1
+| tra : forall M1 M2 M3, alp M1 M2 -> alp M2 M3 -> alp M1 M3
+| shf : forall M1 M2, alp M1 M2 -> alp (shft M1) (shft M2)
+| app : forall M1 M2 N1 N2, alp M1 M2 -> alp N1 N2 -> 
+          alp (appl M1 N1) (appl M2 N2)
+| lam : forall M1 M2 x, alp M1 M2 -> alp (lamb x M1 ) (lamb x M2)
+| axi : forall M y x, alp (lamb x M ) (lamb y (act M (varp y x)) )
+.
+
+
 End var.
 (*
 Context (x y:var) (H: deq x y = false).
@@ -97,3 +110,4 @@ Compute (act _ _ (lamb _ x (lamb _ y (atom _ x)))
 ).
 (varp nat y x)
 *)
+
