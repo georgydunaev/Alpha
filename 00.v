@@ -47,19 +47,19 @@ destruct t as [v|M N|x M|M].
 Show Proof.
 Abort.
 
-Program Fixpoint act (t : term) (f : func) {measure ((lenf f)+(lent t))} : term :=
+Program Fixpoint act (f : func) (t : term) {measure ((lenf f)+(lent t))} : term :=
    match t with
    | atom v =>
        match f with
        | varp y x => if deq v x then atom y else shft x
-       | subs F x => if deq v x then atom v else shft (act v F)
+       | subs F x => if deq v x then atom v else shft (act F v)
        end
-   | appl M N => appl (act M f) (act N f)
-   | lamb x M => lamb x (act M (subs f x))
+   | appl M N => appl (act f M) (act f N)
+   | lamb x M => lamb x (act (subs f x) M)
    | shft M =>
        match f with
        | varp _ _ => shft M
-       | subs F _ => shft (act M F)
+       | subs F _ => shft (act F M)
        end
    end
 (*with actx (t : term) (f : func) {struct t} :=true*)
@@ -92,7 +92,7 @@ Inductive alp : term -> term -> Prop :=
 | app : forall M1 M2 N1 N2, alp M1 M2 -> alp N1 N2 -> 
           alp (appl M1 N1) (appl M2 N2)
 | lam : forall M1 M2 x, alp M1 M2 -> alp (lamb x M1 ) (lamb x M2)
-| axi : forall M y x, alp (lamb x M ) (lamb y (act M (varp y x)) )
+| axi : forall M y x, alp (lamb x M ) (lamb y (act (varp y x) M) )
 .
 
 
