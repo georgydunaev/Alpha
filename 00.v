@@ -2,6 +2,7 @@
 Require Import Coq.Program.Tactics.
 Require Import Coq.Program.Wf.
 Require Import Omega.
+Require Import Psatz. (* lia *)
 
 Section var.
 Context (var:Set) (deq:var->var->bool).
@@ -69,10 +70,12 @@ simpl. omega.
 Defined.
 Next Obligation.
 simpl.
-Admitted.
+lia.
+Defined.
 Next Obligation.
 simpl.
-Admitted.
+lia.
+Defined.
 Next Obligation.
 simpl. omega.
 Defined.
