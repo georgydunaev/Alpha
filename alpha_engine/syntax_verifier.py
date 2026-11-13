@@ -81,6 +81,32 @@ class CoqVerifier:
         obligations = re.findall(r"Next\s+Obligation\b.*?(?:Defined|Qed|Admitted)\.", self.content, re.DOTALL)
         return obligations
 
+    def find_lemmas(self) -> List[str]:
+        """Returns the list of Lemma and Theorem names in the file."""
+        return re.findall(r"\b(?:Lemma|Theorem)\s+([A-Za-z0-9_]+)\s*:", self.content)
+
+    def check_explicit_type_annotations(self) -> Tuple[bool, List[str]]:
+        """
+        Verifies that all forall-quantified variables in lemmas and theorems
+        contain explicit type annotations (e.g. `(x : var)` rather than unannotated `x`).
+        """
+        errors: List[str] = []
+        lemma_pattern = re.compile(
+            r"\b(?:Lemma|Theorem)\s+([A-Za-z0-9_]+)\s*:\s*(.*?)\.\s*Proof\b",
+            re.DOTALL,
+        )
+        for match in lemma_pattern.finditer(self.content):
+            lemma_name = match.group(1)
+            statement = match.group(2)
+            # Check forall clauses in lemma statement
+            for forall_match in re.finditer(r"\bforall\s+([^,]+),", statement):
+                binder_group = forall_match.group(1).strip()
+                if not binder_group.startswith("(") or ":" not in binder_group:
+                    errors.append(
+                        f"Lemma/Theorem {lemma_name} has unannotated or non-standard binder: 'forall {binder_group},'"
+                    )
+        return (len(errors) == 0, errors)
+
     def verify_with_compiler(self) -> Tuple[bool, str]:
         """Runs coqc on the file if coqc is installed."""
         coqc_path = shutil.which("coqc")

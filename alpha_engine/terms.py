@@ -20,8 +20,8 @@ class Term:
 class Atom(Term):
     """Atomic variable term."""
 
-    def __init__(self, var: Any):
-        self.var = var
+    def __init__(self, var: Any) -> None:
+        self.var: Any = var
 
     def to_string(self) -> str:
         return str(self.var)
@@ -36,9 +36,9 @@ class Atom(Term):
 class Appl(Term):
     """Application term: (M N)."""
 
-    def __init__(self, left: Term, right: Term):
-        self.left = left
-        self.right = right
+    def __init__(self, left: Term, right: Term) -> None:
+        self.left: Term = left
+        self.right: Term = right
 
     def to_string(self) -> str:
         return f"({self.left.to_string()} {self.right.to_string()})"
@@ -57,9 +57,9 @@ class Appl(Term):
 class Lamb(Term):
     """Lambda abstraction term: (lamb x M)."""
 
-    def __init__(self, var: Any, body: Term):
-        self.var = var
-        self.body = body
+    def __init__(self, var: Any, body: Term) -> None:
+        self.var: Any = var
+        self.body: Term = body
 
     def to_string(self) -> str:
         return f"(\\ {self.var} . {self.body.to_string()})"
@@ -78,8 +78,8 @@ class Lamb(Term):
 class Shft(Term):
     """Explicit shift operator on terms: (shft M)."""
 
-    def __init__(self, term: Term):
-        self.term = term
+    def __init__(self, term: Term) -> None:
+        self.term: Term = term
 
     def to_string(self) -> str:
         return f"^( {self.term.to_string()} )"
@@ -104,9 +104,9 @@ class Func:
 class Varp(Func):
     """Variable permutation / renaming: varp y x means rename x to y."""
 
-    def __init__(self, y: Any, x: Any):
-        self.y = y
-        self.x = x
+    def __init__(self, y: Any, x: Any) -> None:
+        self.y: Any = y
+        self.x: Any = x
 
     def to_string(self) -> str:
         return f"[{self.y}/{self.x}]"
@@ -121,9 +121,9 @@ class Varp(Func):
 class Subs(Func):
     """Scope abstraction: subs F x protects bound variable x."""
 
-    def __init__(self, func: Func, x: Any):
-        self.func = func
-        self.x = x
+    def __init__(self, func: Func, x: Any) -> None:
+        self.func: Func = func
+        self.x: Any = x
 
     def to_string(self) -> str:
         return f"({self.func.to_string()})_{self.x}"
@@ -274,7 +274,7 @@ def to_canonical(
     t: Term,
     binding_env: Optional[Dict[Any, int]] = None,
     depth: int = 0,
-) -> Tuple:
+) -> Tuple[Any, ...]:
     """
     Converts term to a canonical de Bruijn-indexed structural representation.
     Two terms are alpha-equivalent if and only if their canonical representations match.
@@ -324,8 +324,8 @@ class TermGraph:
     Edges: Child hierarchy and binding back-arcs from variable usages to binder nodes.
     """
 
-    def __init__(self, root: Term):
-        self.root = root
+    def __init__(self, root: Term) -> None:
+        self.root: Term = root
         self.nodes: List[Dict[str, Any]] = []
         self.edges: List[Tuple[int, int, str]] = []  # (source, target, edge_type)
         self._build_graph(root, None, {})

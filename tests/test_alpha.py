@@ -67,6 +67,43 @@ class TestAlphaCoqFiles(unittest.TestCase):
         for ob in obligations:
             self.assertNotIn("Admitted.", ob, "alpha_core.v obligations must be fully proven, never admitted")
 
+        # Verify clean Coq compilation with coqc
+        ok, msg = verifier.verify_with_compiler()
+        self.assertTrue(ok, f"alpha_core.v coqc compilation failed: {msg}")
+
+        # Verify explicit type annotations across all lemmas and theorems
+        annot_ok, annot_errs = verifier.check_explicit_type_annotations()
+        self.assertTrue(annot_ok, f"Implicit or unannotated binders found in alpha_core.v: {annot_errs}")
+
+        # Verify modular lemma decomposition
+        lemmas = verifier.find_lemmas()
+        expected_lemmas = [
+            "lent_atom",
+            "lent_appl_left",
+            "lent_appl_right",
+            "lent_shft",
+            "lent_lamb",
+            "lenf_varp",
+            "lenf_subs",
+            "measure_atom_subs",
+            "measure_appl_left",
+            "measure_appl_right",
+            "measure_lamb_subs",
+            "measure_shft",
+            "alp_refl",
+            "alp_symm",
+            "alp_trans",
+            "alp_app_cong",
+            "alp_lam_cong",
+            "alp_shf_cong",
+            "alp_appl_left_cong",
+            "alp_appl_right_cong",
+            "alp_axi",
+            "alp_symm_iff",
+        ]
+        for lem in expected_lemmas:
+            self.assertIn(lem, lemmas, f"Modular lemma '{lem}' must be defined in alpha_core.v")
+
 
 class TestAlphaMeasures(unittest.TestCase):
     """Verifies term and function length measures and termination bounds."""
@@ -131,6 +168,19 @@ class TestAlphaMeasures(unittest.TestCase):
         meas_parent = measure(f, sh)
         meas_rec = measure(f.func, x)
         self.assertLess(meas_rec, meas_parent)
+
+    def test_modular_measure_lemmas_semantics(self):
+        """Validates semantic properties modeled by Coq modular lemmas."""
+        m = Atom("m")
+        # lent_shft: lent(M) < lent(shft M)
+        self.assertLess(lent(m), lent(Shft(m)))
+        # lent_lamb: lent(M) < lent(lamb x M)
+        self.assertLess(lent(m), lent(Lamb("x", m)))
+        # lenf_subs: lenf(F) < lenf(subs F x)
+        f = Varp("y", "x")
+        self.assertLess(lenf(f), lenf(Subs(f, "z")))
+        # lenf_varp: lenf(varp x y) = 0
+        self.assertEqual(lenf(Varp("a", "b")), 0)
 
 
 class TestAlphaActionEvaluation(unittest.TestCase):
@@ -207,6 +257,21 @@ class TestAlphaEquivalence(unittest.TestCase):
         t = Lamb("x", Appl(Atom("x"), Atom("y")))
         self.assertEqual(free_vars(t), {"y"})
         self.assertEqual(all_vars(t), {"x", "y"})
+
+    def test_congruence_and_symmetry_theorems(self):
+        """Validates congruence and symmetry properties matching Coq theorems."""
+        m1 = Lamb("x", Atom("x"))
+        m2 = Lamb("y", Atom("y"))
+        n1 = Atom("a")
+        n2 = Atom("a")
+        # alp_symm_iff: alp M1 M2 <-> alp M2 M1
+        self.assertEqual(is_alpha_equivalent(m1, m2), is_alpha_equivalent(m2, m1))
+        # alp_appl_left_cong: alp M1 M2 -> alp (appl M1 N) (appl M2 N)
+        self.assertTrue(is_alpha_equivalent(Appl(m1, n1), Appl(m2, n1)))
+        # alp_appl_right_cong: alp N1 N2 -> alp (appl M N1) (appl M N2)
+        self.assertTrue(is_alpha_equivalent(Appl(m1, n1), Appl(m1, n2)))
+        # alp_shf_cong: alp M1 M2 -> alp (shft M1) (shft M2)
+        self.assertTrue(is_alpha_equivalent(Shft(m1), Shft(m2)))
 
 
 class TestAlphaTermGraph(unittest.TestCase):

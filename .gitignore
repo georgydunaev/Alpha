@@ -4,3 +4,11 @@ __pycache__/
 *.py[cod]
 *.class
 .pytest_cache/
+
+# Coq build artifacts
+*.vo
+*.glob
+*.vok
+*.vos
+*.aux
+.*.aux

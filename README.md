@@ -22,7 +22,8 @@
 
 3. **Termination Guarantee (`lenf + lent`)**:
    - Recursion over `act` is proven well-founded via custom measure metric `lenf(f) + lent(t)`.
-   - All 5 obligations are proved mechanically in `alpha_core.v` using `lia`.
+   - All 5 obligations are proved mechanically in `alpha_core.v` through decomposed, reusable modular lemmas using `lia`.
+   - Explicit type annotations are standardized across all theory definitions, lemmas, and inductive constructors.
 
 4. **Alpha-Equivalence (`alp`)**:
    - Inductive relation covering reflexivity, symmetry, transitivity, congruence rules, and axiom `axi`.
