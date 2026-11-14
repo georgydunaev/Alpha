@@ -21,6 +21,16 @@ from .terms import (
     TermGraph,
 )
 
+from .substitution import (
+    fv,
+    fresh,
+    rename,
+    subst,
+    alpha_equiv,
+    beta_step,
+    beta_reduce,
+)
+
 __all__ = [
     "Term",
     "Atom",
@@ -38,4 +48,11 @@ __all__ = [
     "to_canonical",
     "is_alpha_equivalent",
     "TermGraph",
+    "fv",
+    "fresh",
+    "rename",
+    "subst",
+    "alpha_equiv",
+    "beta_step",
+    "beta_reduce",
 ]

@@ -112,10 +112,12 @@ class CoqVerifier:
         coqc_path = shutil.which("coqc")
         if not coqc_path:
             return (True, "coqc not present in environment; skipped external compile check")
+        file_dir = os.path.dirname(os.path.abspath(self.filepath))
         proc = subprocess.run(
-            [coqc_path, "-q", self.filepath],
+            [coqc_path, "-q", "-Q", file_dir, "", self.filepath],
             capture_output=True,
             text=True,
+            cwd=file_dir,
         )
         if proc.returncode == 0:
             return (True, "coqc compilation succeeded")

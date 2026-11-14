@@ -112,16 +112,37 @@ Derived modular theorems:
 
 ---
 
-## 5. Python Logic Engine (`alpha_engine`)
+## 5. Capture-Avoiding Substitution and Freshness (`alpha_subst.v`)
 
-To provide immediate, executable verification without requiring Coq toolchains:
-- `alpha_engine.terms`: Data classes for terms, actions, measures, capture-avoiding action reduction, canonical de Bruijn normalization, and alpha-equivalence testing.
-- `alpha_engine.terms.TermGraph`: Direct syntax graph and binding arc builder for graph-isomorphic equivalence checking.
-- `alpha_engine.syntax_verifier.CoqVerifier`: Static AST and syntax balance checker for `.v` scripts.
+Formalized in `alpha_subst.v` on top of `alpha_core.v`:
+
+### Free Variables (`fv`) and Freshness (`fresh`)
+- `fv (t : term var) : list var`: Computes the list of free variables in term `t`.
+  - `fv (atom v) = v :: nil`
+  - `fv (appl M N) = fv M ++ fv N`
+  - `fv (lamb y M) = filter (fun v => negb (deq v y)) (fv M)`
+  - `fv (shft M) = fv M`
+- `fresh (x : var) (M : term var) : Prop := ~ In x (fv M)`: States that variable `x` does not occur free in term `M`.
+
+### Substitution Lemmas
+- `subst_fresh`: `forall (x : var) (N : term var) (M : term var), fresh x M -> subst x N M = M`.
+- `subst_id`: `forall (x : var) (M : term var), subst x (atom var x) M = M`.
+- `alp_subst_cong`: `forall (M1 : term var) (M2 : term var) (x : var) (N : term var), alp M1 M2 -> alp (subst x N M1) (subst x N M2)`.
+- `alp_core_preservation`: `forall (M1 : term var) (M2 : term var) (x : var) (N : term var), alpha_core.alp var deq M1 M2 -> alp (subst x N M1) (subst x N M2)`.
 
 ---
 
-## 6. Verification
+## 6. Python Logic Engine (`alpha_engine`)
+
+To provide immediate, executable verification without requiring Coq toolchains:
+- `alpha_engine.terms`: Data classes for terms, actions, measures, canonical de Bruijn normalization, and alpha-equivalence testing.
+- `alpha_engine.substitution`: Free variable calculation (`fv`), freshness testing (`fresh`), bound variable renaming (`rename`), capture-avoiding substitution (`subst`), alpha-equivalence testing (`alpha_equiv`), and single-step / full beta-reduction (`beta_step`, `beta_reduce`).
+- `alpha_engine.terms.TermGraph`: Direct syntax graph and binding arc builder for graph-isomorphic equivalence checking.
+- `alpha_engine.syntax_verifier.CoqVerifier`: Static AST, syntax balance, and compiler checker for `.v` scripts.
+
+---
+
+## 7. Verification
 Run all tests via:
 ```bash
 python3 -m unittest discover -s tests -p "test_*.py" -v
