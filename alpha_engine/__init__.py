@@ -31,6 +31,22 @@ from .substitution import (
     beta_reduce,
 )
 
+from .reduction import (
+    parallel_reduce_step,
+    all_parallel_reducts,
+    is_par_beta,
+    check_par_beta_diamond,
+    parallel_reduce,
+    eta_step,
+    eta_reduce,
+    beta_eta_step,
+    beta_eta_reduce,
+    is_beta_normal,
+    is_eta_normal,
+    is_beta_eta_normal,
+    check_church_rosser,
+)
+
 __all__ = [
     "Term",
     "Atom",
@@ -55,4 +71,17 @@ __all__ = [
     "alpha_equiv",
     "beta_step",
     "beta_reduce",
+    "parallel_reduce_step",
+    "all_parallel_reducts",
+    "is_par_beta",
+    "check_par_beta_diamond",
+    "parallel_reduce",
+    "eta_step",
+    "eta_reduce",
+    "beta_eta_step",
+    "beta_eta_reduce",
+    "is_beta_normal",
+    "is_eta_normal",
+    "is_beta_eta_normal",
+    "check_church_rosser",
 ]
