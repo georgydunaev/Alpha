@@ -1,5 +1,7 @@
 # [Alpha · Pass 3/5 (Carte Blanche Examples, Exercises & Self-Contained Demos)] Autonomous Carte-Blanche Improvement in `Alpha`
 
+**Status:** RESOLVED
+
 **Carte-Blanche Autonomous Delegation (Iteration 3 of 5 for `Alpha`)**
 
 Do whatever useful improvements you want in this repository! Add a new self-contained example, worked derivation note, or tutorial file in `examples/` or `notes/` that builds on the repository's topic.

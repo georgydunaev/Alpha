@@ -1,5 +1,7 @@
 # [Alpha · Pass 1/5 (Carte Blanche Exploration & Architecture README)] Autonomous Carte-Blanche Improvement in `Alpha`
 
+**Status:** RESOLVED
+
 **Carte-Blanche Autonomous Delegation (Iteration 1 of 5 for `Alpha`)**
 
 Do whatever useful improvements you want in this repository! Start by exploring all files in the repo, improving or creating a detailed `README.md` explaining the mathematical/software contents, and proposing/opening follow-up tasks if you spot anything interesting.
